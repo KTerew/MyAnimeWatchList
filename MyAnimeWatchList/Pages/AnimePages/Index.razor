@@ -1,0 +1,51 @@
+﻿@page "/anime"
+@using AnimeWatchList.Models.Models;
+
+@inject IAnimeServices _animeService
+
+<h3>Animes</h3>
+<a href="/anime/create" class="btn btn-primary">Add an Anime</a>
+<hr/>
+
+@if(Animes.Count() > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Poster</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var anime in Animes)
+            {
+                <tr>
+                    <td>@anime.Id</td>
+                    <td>@anime.Name</td>
+                    <td>@anime.Description</td>
+                    <td><img src="@anime.Poster" width="300" height="300"></td>
+                    <td>
+                        <a href="/anime/detail/@anime.Id" class="btn btn-primary">View</a>
+                        <a href="/anime/edit/@anime.Id" class="btn btn-success">Edit</a>
+                        <a href="/anime/delete/@anime.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-danger">Sorry, there are no Available Animes at this time.</p>
+}
+@code {
+    public List<AnimeListItem> Animes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Animes = await _animeService.GetAnimes();
+    }
+}

@@ -1,0 +1,51 @@
+﻿@page "/EpisodeTracker"
+
+@inject IEpisodeTrackerServices _episodeTrackerServices
+
+<h3>EpisodeTracker</h3>
+<a href="/EpisodeTracker/create" class="btn btn-primary">Create An Episode Tracker</a>
+<hr/>
+
+@if(Episodes.Count() > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Anime Name</th>
+                <th>Total Episodes</th>
+                <th>Current Episodes</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var episode in Episodes)
+            {
+                <tr>
+                    <td>@episode.Id</td>
+                    <td>@episode.AnimeName</td>
+                    <td>@episode.TotalEpisodes</td>
+                    <td>@episode.CurrentEpisode</td>
+                    <td>
+                        <a href="/EpisodeTracker/edit/@episode.Id" class="btn btn-success">Edit</a>
+                        <a href="/EpisodeTracker/detail/@episode.Id" class="btn btn-warning">Details</a>
+                        <a href="/EpisodeTracker/delete/@episode.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-danger">Sorry, there are no available Episode Trackers at this time.</p>
+}
+
+@code {
+    private List<EpisodeTrackerListItem> Episodes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Episodes = await _episodeTrackerServices.GetEpisodeTrackers();
+    }
+}

@@ -1,0 +1,71 @@
+﻿@page "/EpisodeTracker/create"
+
+@inject IEpisodeTrackerServices _episodeServices
+@inject IAnimeServices _animeServices
+@inject NavigationManager _navManager
+
+<h3>Create</h3>
+<hr/>
+
+@if(errorMessage != null)
+{
+    <h5 class="text-danger">@errorMessage</h5>
+}
+else
+{
+    <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+            <label>Total Episodes: </label>
+            <InputNumber class="form-control" @bind-Value="model.TotalEpisodes"/>
+        </div>
+        <div class="form-group">
+            <label>Current Episode: </label>
+            <InputNumber class="form-control" @bind-Value="model.CurrentEpisode"/>
+        </div>
+        <div class="form-group">
+            <label>Anime Name: </label>
+            <InputText class="form-control" @bind-Value="model.AnimeName"/>
+        </div>
+        @if(Animes == null)
+        {
+            <p>No Available Animes</p>
+        }
+        else
+        {
+            <InputSelect @bind-Value="model.AnimeId" class="form-select">
+                <option value="0" disabled="disabled" selected>== Select Anime ==</option>
+                @foreach(var animes in Animes)
+                {
+                    <option value="@animes.Id">@animes.Name</option>
+                }
+            </InputSelect>
+        }
+        <button type="submit" class="btn btn-primary btn-block mt-5">Submit</button>
+    </EditForm>
+}
+
+@code {
+    private EpisodeTrackerCreate model = new();
+
+    private List<AnimeListItem>? Animes;
+
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Animes = await _animeServices.GetAnimes();
+    }
+
+    public async Task HandleSubmit()
+    {
+        var isSuccess = await _episodeServices.CreateEpisodeTracker(model);
+        if (isSuccess)
+            _navManager.NavigateTo("/EpisodeTracker");
+        else
+        {
+            errorMessage = "Could not create your Episode Tracker please try again later";
+        }
+    }
+}

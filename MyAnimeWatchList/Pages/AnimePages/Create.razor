@@ -1,0 +1,61 @@
+﻿@page "/anime/create"
+
+@inject IAnimeServices _animeServices
+@inject NavigationManager _navManager
+
+<h3>Create an Anime</h3>
+<hr/>
+
+@if(errorMessage != null)
+{
+    <h5 class="text-danger">@errorMessage</h5>
+}
+else
+{
+    <div class="container">
+        <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+                <div class="form-group">
+                    <label>Name:</label>
+                    <InputText class="form-control" @bind-Value="model.Name"/>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <InputTextArea class="form-control" @bind-Value="model.Description"/>
+                </div>
+                <div class="form-group">
+                    <label>Poster:</label>
+                    <InputText class="form-control" @bind-Value="model.Poster"/>
+                </div>
+                <div class="form-group">
+                    <label>Number of Seasons:</label>
+                    <InputNumber class="form-control" @bind-Value="model.NumOfSeasons"/>
+                </div>
+                <div class="form-group">
+                    <label>Number of Episodes:</label>
+                    <InputNumber class="form-control" @bind-Value="model.NumOfEpisodes"/>
+                </div>
+                <div class="form-group">
+                    <label>Release Date:</label>
+                    <InputDate class="form-control" @bind-Value="model.ReleaseDate"/>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-5">Submit</button>
+        </EditForm>
+    </div>
+}
+
+@code {
+    private AnimeCreate model = new();
+
+    private string? errorMessage;
+
+    public async Task HandleSubmit()
+    {
+        var isSuccess = await _animeServices.CreateAnime(model);
+        if (isSuccess) _navManager.NavigateTo("/anime");
+        else
+            errorMessage = "Could not create your Anime right now. Please try again later";
+    }
+}

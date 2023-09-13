@@ -1,0 +1,80 @@
+﻿@page "/anime/edit/{AnimeId:int}"
+
+@inject IAnimeServices _animeServices
+@inject NavigationManager _navManager
+
+<h3>Edit</h3>
+<hr />
+
+@if (errorMessage != null)
+{
+    <h5 class="text-danger">@errorMessage</h5>
+}
+else
+{
+    <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label>Name:</label>
+            <InputText class="form-control" @bind-Value="model.Name" />
+        </div>
+        <div class="form-group">
+            <label>Description:</label>
+            <InputTextArea class="form-control" @bind-Value="model.Description" />
+        </div>
+        <div class="form-group">
+            <label>Poster:</label>
+            <InputText class="form-control" @bind-Value="model.Poster" />
+        </div>
+        <div class="form-group">
+            <label>Number of Seasons:</label>
+            <InputNumber class="form-control" @bind-Value="model.NumOfSeasons" />
+        </div>
+        <div class="form-group">
+            <label>Number of Episodes:</label>
+            <InputNumber class="form-control" @bind-Value="model.NumOfEpisodes" />
+        </div>
+        <div class="form-group">
+            <label>Release Date:</label>
+            <InputDate class="form-control" @bind-Value="model.ReleaseDate" />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block mt-5">Submit</button>
+        <a href="/anime" class="btn btn-secondary btn-block mt-5">Back to List</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int AnimeId { get; set; }
+    private AnimeEdit model = new();
+    private AnimeDetail _animeDetail = new();
+
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _animeDetail = await _animeServices.GetAnime(AnimeId);
+
+        if(_animeDetail != null)
+        {
+            model.Id = _animeDetail.Id;
+            model.Name = _animeDetail.Name;
+            model.Description = _animeDetail.Description;
+            model.Poster = _animeDetail.Poster;
+            model.NumOfSeasons = _animeDetail.NumOfSeasons;
+            model.NumOfEpisodes = _animeDetail.NumOfEpisodes;
+            model.ReleaseDate = _animeDetail.ReleaseDate;
+        }
+    }
+
+    public async Task HandleSubmit()
+    {
+        var isSuccess = await _animeServices.UpdateAnime(model);
+        if (isSuccess)
+            _navManager.NavigateTo("/anime");
+        else
+            errorMessage = "Could not update your Anime at this time. Please try again later.";
+    }
+}

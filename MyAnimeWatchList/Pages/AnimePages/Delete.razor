@@ -1,0 +1,71 @@
+﻿@page "/anime/delete/{AnimeId:int}"
+
+@inject IAnimeServices _animeServices
+@inject NavigationManager _navManager
+
+<h3>DeleteAnime</h3>
+<h4 class="text-danger">Are you sure you want to Delete this Anime?: </h4>
+
+@if(errorMessage != null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+
+@if(animeDetail is null)
+{
+    <p class="text-warning">Sorry, there isn't any available Info.</p>
+}
+else
+{
+    <div class="container">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Anime #@animeDetail.Id</span>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">@animeDetail.Name</h4>
+                <p class="text-muted">@animeDetail.Description</p>
+                <img src="@animeDetail.Poster" width="300" height="300">
+                <p class="text-muted">Number of Seasons: @animeDetail.NumOfSeasons</p>
+                <p class="text-muted">Number of Episodes: @animeDetail.NumOfEpisodes</p>
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-between">
+                <span class="text-left">Release Date: @animeDetail.ReleaseDate</span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+            <div class="text-center justify-content-between w-25"></div>
+            <a href="/anime/edit/@animeDetail.Id" class="btn btn-outline-primary">Edit</a>
+            <a href="/anime" class="btn btn-outline-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <EditForm Model="@animeDetail" OnValidSubmit="@DeleteAnime">
+        <button type="submit" class="btn btn-danger m-3">Delete</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int AnimeId { get; set; }
+
+    public AnimeDetail? animeDetail { get; set; }
+    private string? errorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        animeDetail = await _animeServices.GetAnime(AnimeId);
+    }
+
+    public async Task DeleteAnime()
+    {
+        var isSuccess = await _animeServices.DeleteAnime(AnimeId);
+        if (isSuccess)
+            _navManager.NavigateTo("/anime");
+        else
+        {
+            errorMessage = "Deletion Failed.";
+        }
+    }
+}
