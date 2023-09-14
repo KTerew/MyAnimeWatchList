@@ -1,4 +1,6 @@
-﻿namespace AnimeWatchList.Models.Models
+﻿using AnimeWatchList.Data.Entities;
+
+namespace AnimeWatchList.Models.Models
 {
     public class AnimeDetail
     {
@@ -15,5 +17,15 @@
         public int NumOfEpisodes { get; set; }
 
         public DateTime ReleaseDate { get; set; }
+
+        public virtual List<Rating> Ratings { get; set; } = new List<Rating>();
+
+        public double AverageScore
+        {
+            get
+            {
+                return Ratings.Count > 0 ? Ratings.Select(r => r.Score).Sum() / Ratings.Count : 0;
+            }
+        }
     }
 }

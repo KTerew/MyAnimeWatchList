@@ -1,0 +1,74 @@
+﻿@page "/rating/delete/{RatingId:int}"
+
+@inject IRatingServices _ratingServices
+@inject IAnimeServices _animeServices
+@inject NavigationManager _navManager
+
+<h3>Delete a Rating</h3>
+<h4 class="text-danger">Are you sure you want to Delete this Rating?: </h4>
+
+@if (ratingDetail is null)
+{
+    <p class="text-warning">Sorry, there isn't any availble info.</p>
+}
+else
+{
+    <div class="container">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Rating #@ratingDetail.Id</span>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">@animeDetail.Name</h4>
+                <p class="text-muted">@animeDetail.Description</p>
+                <img src="@animeDetail.Poster" width="300" height="300">
+                <p class="text-muted">Number of Seasons: @animeDetail.NumOfSeasons</p>
+                <p class="text-muted">Number of Episodes: @animeDetail.NumOfEpisodes</p>
+                <p class="text-muted">Average Rating: @animeDetail.AverageScore</p>
+                <hr />
+                <h3 class="text-muted">Rating Title: @ratingDetail.Title</h3>
+                <p class="text-muted">Rating Comment: @ratingDetail.Comment</p>
+                <p class="text-muted">Rating Score: @ratingDetail.Score</p>
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-between">
+                <span class="text-left">Release Date: @animeDetail.ReleaseDate</span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+            <div class="text-center justify-content-between w-25">
+                <a href="/rating/edit/@ratingDetail.Id" class="btn btn-outline-warning">Edit</a>
+                <a href="/rating" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+
+    <EditForm Model="@ratingDetail" OnValidSubmit="@DeleteRating">
+        <button type="submit" class="btn btn-danger m-3">Delete</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int RatingId { get; set; }
+
+    public RatingDetail? ratingDetail { get; set; }
+    public AnimeDetail? animeDetail { get; set; }
+
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ratingDetail = await _ratingServices.GetRating(RatingId);
+        animeDetail = await _animeServices.GetAnime(ratingDetail.AnimeId);
+    }
+
+    public async Task DeleteRating()
+    {
+        var isSuccess = await _ratingServices.DeleteRating(RatingId);
+        if (isSuccess)
+            _navManager.NavigateTo("/rating");
+        else
+            errorMessage = "Deletion Failed.";
+    }
+}

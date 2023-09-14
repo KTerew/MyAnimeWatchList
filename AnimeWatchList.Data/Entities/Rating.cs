@@ -17,6 +17,8 @@ namespace AnimeWatchList.Data.Entities
         [Required]
         public string Comment { get; set; }
 
+        public virtual Anime Anime { get; set; }
+
         [ForeignKey(nameof(Anime))]
         public int AnimeId { get; set; }
     }

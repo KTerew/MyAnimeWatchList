@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AnimeWatchList.Data.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AnimeWatchList.Models.Models
 {
@@ -15,5 +17,10 @@ namespace AnimeWatchList.Models.Models
 
         [Required]
         public string Comment { get; set; }
+
+        public virtual Anime? Anime { get; set; }
+
+        [ForeignKey(nameof(Anime))]
+        public int AnimeId { get; set; }
     }
 }

@@ -1,10 +1,12 @@
-﻿@page "/anime/detail/{AnimeId:int}"
+﻿@page "/rating/detail/{RatingId:int}"
 
+@inject IRatingServices _ratingServices
 @inject IAnimeServices _animeServices
 
-<h3>Anime Details</h3>
+<h3>View a Rating</h3>
+<hr/>
 
-@if (animeDetail is null)
+@if (ratingDetail is null)
 {
     <p class="text-warning">Sorry, there isn't any availble info.</p>
 }
@@ -13,7 +15,7 @@ else
     <div class="container">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <span>Anime #@animeDetail.Id</span>
+                <span>Rating #@ratingDetail.Id</span>
             </div>
             <div class="card-body">
                 <h4 class="card-title">@animeDetail.Name</h4>
@@ -22,6 +24,10 @@ else
                 <p class="text-muted">Number of Seasons: @animeDetail.NumOfSeasons</p>
                 <p class="text-muted">Number of Episodes: @animeDetail.NumOfEpisodes</p>
                 <p class="text-muted">Average Rating: @animeDetail.AverageScore</p>
+                <hr/>
+                <h3 class="text-muted">Rating Title: @ratingDetail.Title</h3>
+                <p class="text-muted">Rating Comment: @ratingDetail.Comment</p>
+                <p class="text-muted">Rating Score: @ratingDetail.Score</p>
             </div>
             <div class="card-footer text-muted d-flex justify-content-between">
                 <span class="text-left">Release Date: @animeDetail.ReleaseDate</span>
@@ -30,9 +36,9 @@ else
 
         <div class="d-flex justify-content-center mt-3">
             <div class="text-center justify-content-between w-25">
-            <a href="/anime/edit/@animeDetail.Id" class="btn btn-outline-warning">Edit</a>
-            <a href="/anime/delete/@animeDetail.Id" class="btn btn-outline-danger">Delete</a>
-            <a href="/anime" class="btn btn-outline-secondary">Back to List</a>
+            <a href="/rating/edit/@ratingDetail.Id" class="btn btn-outline-warning">Edit</a>
+            <a href="/rating/delete/@ratingDetail.Id" class="btn btn-outline-danger">Delete</a>
+            <a href="/rating" class="btn btn-outline-secondary">Back to List</a>
             </div>
         </div>
     </div>
@@ -40,12 +46,14 @@ else
 
 @code {
     [Parameter]
-    public int AnimeId { get; set; }    
+    public int RatingId { get; set; }
 
+    public RatingDetail? ratingDetail { get; set; }
     public AnimeDetail? animeDetail { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        animeDetail = await _animeServices.GetAnime(AnimeId);
+        ratingDetail = await _ratingServices.GetRating(RatingId);
+        animeDetail = await _animeServices.GetAnime(ratingDetail.AnimeId);
     }
 }

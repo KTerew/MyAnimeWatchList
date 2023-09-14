@@ -1,0 +1,93 @@
+﻿@page "/rating/edit/{RatingId:int}"
+
+@inject IRatingServices _ratingServices
+@inject IAnimeServices _animeServices
+@inject NavigationManager _navManager
+
+<h3>Edit a Rating</h3>
+<hr/>
+
+@if(errorMessage != null)
+{
+    <h5 class="text-danger">@errorMessage</h5>
+}
+else
+{
+    <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+            <label>Title: </label>
+            <InputText class="form-control" @bind-Value="model.Title"/>
+        </div>
+        <div class="form-group">
+            <label>Comment: </label>
+            <InputTextArea class="form-control" @bind-Value="model.Comment"/>
+        </div>
+        <div class="form-group">
+            <label>Score out of 10: </label>
+            <InputNumber class="form-control" @bind-Value="model.Score"/>
+        </div>
+        @if(Animes == null)
+        {
+            <p>No Available Animes</p>
+        }
+        else
+        {
+            <InputSelect @bind-Value="model.AnimeId" class="form-select">
+                <option value="0" disabled="disabled" selected>== Select an Anime ==</option>
+                @foreach (var anime in Animes)
+                {
+                    <option value="@anime.Id">@anime.Name</option>
+                }
+            </InputSelect>
+        }
+
+        @if (model.Score > 10)
+            model.Score = 10;
+        @if (model.Score < 0)
+            model.Score = 0;
+
+        <button type="submit" class="btn btn-primary btn-block mt-5">Submit</button>
+        <a href="/rating" class="btn btn-secondary btn-block mt-5">Back to List</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int RatingId { get; set; }
+    private RatingEdit model = new();
+    private RatingDetail _ratingDetail = new();
+
+    private List<AnimeListItem>? Animes;
+
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _ratingDetail = await _ratingServices.GetRating(RatingId);
+
+        if(_ratingDetail != null)
+        {
+            model.Id = _ratingDetail.Id;
+            model.Title = _ratingDetail.Title;
+            model.Comment = _ratingDetail.Comment;
+            model.Score = _ratingDetail.Score;
+        }
+
+        Animes = await _animeServices.GetAnimes();
+    }
+
+    public async Task HandleSubmit()
+    {
+        var isSuccess = await _ratingServices.UpdateRating(model);
+        if (isSuccess)
+        {
+            _navManager.NavigateTo("/rating");
+        }
+        else
+        {
+            errorMessage = "Could not update your Rating right now. Please try again Later.";
+        }
+    }
+}

@@ -1,0 +1,47 @@
+﻿@page "/rating"
+
+@inject IRatingServices _ratingServices
+
+<h3>Ratings</h3>
+<a href="rating/create" class="btn btn-primary">Create a Rating</a>
+<hr/>
+
+@if(ratingList.Count() > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Comment</th>
+                <th>Score</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rating in ratingList)
+            {
+                <tr>
+                    <td>@rating.Id</td>
+                    <td>@rating.Title</td>
+                    <td>@rating.Comment</td>
+                    <td>@rating.Score</td>
+                    <td>
+                        <a href="rating/detail/@rating.Id" class="btn btn-success">View</a>
+                        <a href="rating/edit/@rating.Id" class="btn btn-warning">Edit</a>
+                        <a href="rating/delete/@rating.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RatingListItem> ratingList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ratingList = await _ratingServices.GetRatings();
+    }
+}

@@ -15,5 +15,15 @@
         public int NumOfEpisodes { get; set; }
 
         public DateTime ReleaseDate { get; set; }
+
+        public virtual List<Rating> Ratings { get; set; } = new List<Rating>();
+
+        public double AverageScore
+        {
+            get
+            {
+                return Ratings.Count > 0 ? Ratings.Select(r => r.Score).Sum() / Ratings.Count : 0;
+            }
+        }
     }
 }

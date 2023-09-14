@@ -44,7 +44,7 @@ namespace AnimeWatchList.Services.BusinessLogic
 
         public async Task<RatingDetail> GetRating(int id)
         {
-            var rating = await _context.Ratings.Include(r => r.AnimeId).SingleOrDefaultAsync(x => x.Id == id);
+            var rating = await _context.Ratings.Include(r => r.Anime).SingleOrDefaultAsync(x => x.Id == id);
 
             if (rating == null) return new RatingDetail();
 
@@ -53,7 +53,7 @@ namespace AnimeWatchList.Services.BusinessLogic
 
         public async Task<List<RatingListItem>> GetRatings()
         {
-            var rating = await _context.Ratings.Include(r => r.AnimeId).ToListAsync();
+            var rating = await _context.Ratings.Include(r => r.Anime).ToListAsync();
 
             return _mapper.Map<List<RatingListItem>>(rating);
         }
