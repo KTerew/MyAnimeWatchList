@@ -1,0 +1,59 @@
+﻿@page "/EpisodeTracker/delete/{EpisodetrackerId:int}"
+
+@inject IEpisodeTrackerServices _episodeServices
+@inject NavigationManager _navManager
+
+<h3>Delete an Episode Tracker</h3>
+<h4 class="text-danger">Are you sure you want to delete this episode tracker?: </h4>
+
+@if (episodeTrackerDetail is null)
+{
+    <p class="text-warning">Sorry, there isn't any available info.</p>
+}
+else
+{
+    <div class="container">
+        <div class="card">
+            <span>Episode Tracker #@episodeTrackerDetail.Id</span>
+
+        </div>
+        <div class="card-body">
+            <div class="card-body">
+                <p class="text-muted">Number of Episodes: @episodeTrackerDetail.TotalEpisodes</p>
+                <p class="text-muted">Number of Episodes: @episodeTrackerDetail.CurrentEpisode</p>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+            <div class="text-center justify-content-between w-25"></div>
+            <a href="/EpisodeTracker/edit/@episodeTrackerDetail.Id" class="btn btn-outline-warning">Edit</a>
+            <a href="/EpisodeTracker" class="btn btn-outline-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <EditForm Model="@episodeTrackerDetail" OnValidSubmit="@DeleteEpisodeTracker">
+        <button type="submit" class="btn btn-danger m-3">Delete</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int EpisodeTrackerId { get; set; }
+
+    public EpisodeTrackerDetail? episodeTrackerDetail { get; set; }
+    private string? errorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        episodeTrackerDetail = await _episodeServices.GetEpisodeTracker(EpisodeTrackerId);
+    }
+
+    public async Task DeleteEpisodeTracker()
+    {
+        var isSuccess = await _episodeServices.DeleteEpisodeTracker(EpisodeTrackerId);
+        if (isSuccess)
+            _navManager.NavigateTo("/EpisodeTracker");
+        else
+            errorMessage = "Deletion Failed";
+    }
+}

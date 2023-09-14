@@ -43,7 +43,7 @@ namespace AnimeWatchList.Services.BusinessLogic
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public async Task<EpisodeTrackerDetail> GetEpisodeTrackerDetail(int id)
+        public async Task<EpisodeTrackerDetail> GetEpisodeTracker(int id)
         {
             var episode = await _context.Episodes.Include(e => e.Anime).SingleOrDefaultAsync(x => x.Id == id);
 

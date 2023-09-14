@@ -1,6 +1,6 @@
 ﻿@page "/EpisodeTracker"
 
-@inject IEpisodeTrackerServices _episodeTrackerServices
+@inject IEpisodeTrackerServices _episodeServices
 
 <h3>EpisodeTracker</h3>
 <a href="/EpisodeTracker/create" class="btn btn-primary">Create An Episode Tracker</a>
@@ -27,8 +27,9 @@
                     <td>@episode.TotalEpisodes</td>
                     <td>@episode.CurrentEpisode</td>
                     <td>
-                        <a href="/EpisodeTracker/edit/@episode.Id" class="btn btn-success">Edit</a>
-                        <a href="/EpisodeTracker/detail/@episode.Id" class="btn btn-warning">Details</a>
+                        <a href="/EpisodeTracker/detail/@episode.Id" class="btn btn-success">Details</a>
+                        <a href="/EpisodeTracker/EditTotalEpisodes/@episode.Id" class="btn btn-warning">Edit Total Episodes</a>
+                        <a href="/EpisodeTracker/EditCurrentEpisode/@episode.Id" class="btn btn-warning">Edit Current Episode</a>
                         <a href="/EpisodeTracker/delete/@episode.Id" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
@@ -46,6 +47,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Episodes = await _episodeTrackerServices.GetEpisodeTrackers();
+        Episodes = await _episodeServices.GetEpisodeTrackers();
     }
 }

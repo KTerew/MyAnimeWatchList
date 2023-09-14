@@ -13,7 +13,7 @@ namespace AnimeWatchList.Services.BusinessLogic.IServices
         Task<bool> UpdateEpisodeTotal(EpisodeTrackerEdit model);
         Task<bool> UpdateCurrentEpisode(EpisodeTrackerEdit model);
         Task<bool> DeleteEpisodeTracker(int id);
-        Task<EpisodeTrackerDetail> GetEpisodeTrackerDetail(int id);
+        Task<EpisodeTrackerDetail> GetEpisodeTracker(int id);
         Task<List<EpisodeTrackerListItem>> GetEpisodeTrackers();
     }
 }

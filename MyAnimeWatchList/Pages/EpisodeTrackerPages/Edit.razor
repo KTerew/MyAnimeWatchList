@@ -1,0 +1,56 @@
+﻿@page "/EpisodeTracker/EditTotalEpisodes/{EpisodeTrackerId:int}"
+
+@inject IEpisodeTrackerServices _episodeServices
+@inject NavigationManager _navManager
+
+<h3>Edit Total Episode Count</h3>
+<hr/>
+
+@if (errorMessage != null)
+{
+    <h5 class="text-warning">@errorMessage</h5>
+}
+else
+{
+    <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+            <label>Total Episode Count: </label>
+            <InputNumber class="form-control" @bind-Value="model.TotalEpisodes" />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block mt-5">Submit</button>
+        <a href="/EpisodeTracker" class="btn btn-secondary btn-block mt-5">Back To List</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int EpisodeTrackerId { get; set; }
+
+    private EpisodeTrackerEdit model = new();
+    private EpisodeTrackerDetail _episodeTrackerDetail = new();
+
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _episodeTrackerDetail = await _episodeServices.GetEpisodeTracker(EpisodeTrackerId);
+
+        if (_episodeTrackerDetail != null)
+        {
+            model.Id = _episodeTrackerDetail.Id;
+            model.TotalEpisodes = _episodeTrackerDetail.TotalEpisodes;
+        }
+    }
+
+    public async Task HandleSubmit()
+    {
+        var isSuccess = await _episodeServices.UpdateEpisodeTotal(model);
+        if (isSuccess)
+            _navManager.NavigateTo("/EpisodeTracker");
+        else
+            errorMessage = "Could not update your Episode Total right now. Please try again later";
+    }
+}
